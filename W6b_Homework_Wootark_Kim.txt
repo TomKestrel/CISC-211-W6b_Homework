@@ -1,0 +1,129 @@
+; W6b_Homework
+; by Wootark Kim
+
+; Task: Assign a number to a register or a variable, pass a number to the function and display the result, 'odd' or 'even'. 
+;	The result should be displayed on the console. The function should check whether the number is an even or an odd number.
+
+; the section where I can declare and initialize my variables
+section .data
+	number dd 18 ; <-------- choose a random number to check whether it is odd or even
+	line dd 0x0				; 0x0 means 0. "line" will serve as a placeholder address (so there's a place for the assembler to write onto)
+
+; the section where my code that will be read begins
+section .text
+	global _start
+
+_start:
+	xor eax, eax				; clearing out all the registers just in case non cleared registers causes problems while testing
+	xor ebx, ebx
+	xor ecx, ecx
+	xor edx, edx
+
+	push dword [number]			; push the number value from [number]
+	push 2					; push 2
+
+	call odd_function			; call the odd_function
+
+	; instructions for shutting down
+	mov eax, 1				; load eax with the system call number for termination (aka I want to shut down this program now)
+	int 0x80				; initiate system call
+	
+odd_function:					; assume every number is odd until proven otherwise by remainder
+	push ebp				; Prologue
+	mov ebp, esp
+
+	mov ebx, dword[ebp+8]
+	mov eax, dword[ebp+12]
+	div ebx 				; divide eax with ebx (note: the remainder will be stored in edx by default)
+
+	cmp edx, 0				; compare edx with 0 (this is where we start to prove whether the number is even or not)
+
+	je even_function			; "jump if equal" This means the number is even since there were no remainder value stored in edx
+						; otherwise don't jump since the number is considered odd	
+	
+	; write "o"
+	mov eax, 0x6F 				; ASCII values that will spell out "o" (to spell out odd)
+	mov dword [result], eax			; I found out that this line is necessary if I want the actual letters to be printed on the terminal
+	mov ecx, [result]			; put [result]'s value into ecx
+	mov eax, 4				; load eax with the system call number for writing (aka I want to write data)
+	mov ebx, 1				; load ebx with the file descriptor for standard output (aka write to standard output)
+	mov ecx, line				; load ecx with the address of the message to write (aka write starting from this address)
+	mov edx, 5				; load edx with the length of the message (aka hey when you write, just know that this is how long the data is)
+	int 0x80				; initiate system call
+	mov dword [result], eax
+    
+	; write "d"
+   	mov eax, 0x64 				; ASCII values that will spell out "d" (to spell out odd)
+	mov dword [result], eax			; I found out that this line is necessary if I want the actual letters to be printed on the terminal
+	mov ecx, [result]			; put [result]'s value into ecx
+	mov eax, 4				; load eax with the system call number for writing (aka I want to write data)
+	mov ebx, 1				; load ebx with the file descriptor for standard output (aka write to standard output)
+	mov ecx, line				; load ecx with the address of the message to write (aka write starting from this address)
+	mov edx, 5				; load edx with the length of the message (aka hey when you write, just know that this is how long the data is)
+	int 0x80				; initiate system call
+	mov dword [result], eax
+    
+	; write "d"
+	mov eax, 0x64 				; ASCII values that will spell out "d" (to spell out odd)
+	mov dword [result], eax			; I found out that this line is necessary if I want the actual letters to be printed on the terminal
+	mov ecx, [result]			; put [result]'s value into ecx
+	mov eax, 4				; load eax with the system call number for writing (aka I want to write data)
+	mov ebx, 1				; load ebx with the file descriptor for standard output (aka write to standard output)
+	mov ecx, line				; load ecx with the address of the message to write (aka write starting from this address)
+	mov edx, 5				; load edx with the length of the message (aka hey when you write, just know that this is how long the data is)
+	int 0x80				; initiate system call
+	mov dword [result], eax
+
+	; Epilogue	(self-note: I will get segmentation error if I do not include the leave command)
+	leave 
+	ret
+
+even_function:
+	; write "e"
+	mov eax, 0x65 				; ASCII values that will spell out "e" (to spell out even)
+	mov dword [result], eax			; I found out that this line is necessary if I want the actual letters to be printed on the terminal
+	mov ecx, [result]			; put [result]'s value into ecx
+	mov eax, 4				; load eax with the system call number for writing (aka I want to write data)
+	mov ebx, 1				; load ebx with the file descriptor for standard output (aka write to standard output)
+	mov ecx, line				; load ecx with the address of the message to write (aka write starting from this address)
+	mov edx, 5				; load edx with the length of the message (aka hey when you write, just know that this is how long the data is)
+	int 0x80				; initiate system call
+	mov dword [result], eax
+
+	; write "v"
+	mov eax, 0x76 				; ASCII values that will spell out "v" (to spell out even)
+	mov dword [result], eax			; I found out that this line is necessary if I want the actual letters to be printed on the terminal
+	mov ecx, [result]			; put [result]'s value into ecx
+	mov eax, 4				; load eax with the system call number for writing (aka I want to write data)
+	mov ebx, 1				; load ebx with the file descriptor for standard output (aka write to standard output)
+	mov ecx, line				; load ecx with the address of the message to write (aka write starting from this address)
+	mov edx, 5				; load edx with the length of the message (aka hey when you write, just know that this is how long the data is)
+	int 0x80				; initiate system call
+	mov dword [result], eax
+
+	; write "e"
+	mov eax, 0x65 				; ASCII values that will spell out "e" (to spell out even)
+	mov dword [result], eax			; I found out that this line is necessary if I want the actual letters to be printed on the terminal
+	mov ecx, [result]			; put [result]'s value into ecx
+	mov eax, 4				; load eax with the system call number for writing (aka I want to write data)
+	mov ebx, 1				; load ebx with the file descriptor for standard output (aka write to standard output)
+	mov ecx, line				; load ecx with the address of the message to write (aka write starting from this address)
+	mov edx, 5				; load edx with the length of the message (aka hey when you write, just know that this is how long the data is)
+	int 0x80				; initiate system call
+
+	; write "n"
+	mov eax, 0x6E 				; ASCII values that will spell out "n" (to spell out even)
+	mov dword [result], eax			; I found out that this line is necessary if I want the actual letters to be printed on the terminal
+	mov ecx, [result]			; put [result]'s value into ecx
+	mov eax, 4				; load eax with the system call number for writing (aka I want to write data)
+	mov ebx, 1				; load ebx with the file descriptor for standard output (aka write to standard output)
+	mov ecx, line				; load ecx with the address of the message to write (aka write starting from this address)
+	mov edx, 5				; load edx with the length of the message (aka hey when you write, just know that this is how long the data is)
+	int 0x80				; initiate system call
+
+	; Epilogue	(self-note: I will get segmentation error if I do not include the leave command)
+	leave
+	ret
+
+section .bss
+	result resb 1

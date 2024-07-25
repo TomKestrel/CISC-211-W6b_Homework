@@ -1,0 +1,83 @@
+W6b_Homework_Challenges
+by Wootark Kim
+
+"What were your challenges in performing the lab (from design to the implementation phases)?"
+
+My greatest challenge was trying to figure out how to solve segmentation errors and properly get the div command result within the function. 
+It took me about 1 hour to solve the segmentation error. I eventaully realized I forgot to include the "leave" command after like triple
+checking the lecture and comparing it to my code. The greatest time consuming moment was trying to figure out why the div command was not working 
+within the function. I understood that div will automatically divide eax by ebx and the result in the answer going to eax and the remainder
+going into edx. However, the assigning of my number kept getting mixed up. After many attempts at deleting, rewriting, and debugging I realized
+that my error was very simple. I wrote:
+
+	mov eax, dword[ebp+8]
+	mov ebx, dword[ebp+12]
+
+when it should have been:
+
+	mov ebx, dword[ebp+8]
+	mov eax, dword[ebp+12]
+
+Since my push code stated:
+
+	push dword [number]			; push the number value from [number]
+	push 2	
+
+I thought the first ebp+8 assignment would refer to the "push dword [number]" if I assigned eax to it but this was not the case.
+Instead I should of had assigned it to ebx. I guess there's a lot of "backward" flow in assembly. Or maybe this was the case because
+stacks operate in a last-in-first-out flow. I guess that means the "mov ebx, dword[ebp+8]" would refer to the 2nd push statement ("push 2") instead.
+This took me like 3 hours to realize. Tsk tsk tsk...
+
+
+Flowchart (my general thought process from top to bottom):
+
+Upon seeing the lecture reading:
+my mind: "What in the world is ebp and esp? Are these more registers?"
+	.
+	.
+	.
+"Okay so they deal with placement of logic flow? As in it lets the assembly know where we drifted off from and how to get back
+to the original place after the function reading has been completed."
+	.
+	.
+	.
+After trying to test code: "what is a segmentation error!?"
+	.
+	.
+	.
+Proceeds to delete each line and test methodically. Eventually realize it is because I didn't include a leave command
+in the epilogue.
+	.
+	.
+	.
+Now I am getting that the number is always "odd" even if it is not. Why?
+	.
+	.
+	.
+Refers back to old assignment that made us use the div command.
+Checks gdb, sees that the eax and ebx assignment is correct, but edx does not update correctly
+	.
+	.
+Recheck code and test some lines. 
+Spend about 2 hours, cannot solve why
+	.
+	.
+Checks gdb again. Realized that my first assessment was incorrect. The eax and ebx assignment is ACTUALLY SWITCHED. 
+But why?
+	.
+	.
+Finds out that code was:
+	mov eax, dword[ebp+8]
+	mov ebx, dword[ebp+12]
+
+when it should have been:
+
+	mov ebx, dword[ebp+8]
+	mov eax, dword[ebp+12]
+	.
+	.
+	.
+Trying to figure out how to assign multiple letters and hex values to one register
+	.
+	.
+I gave up and decided to print each letters individually to spell out odd and even
